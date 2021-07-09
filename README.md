@@ -1,1 +1,2 @@
 # Youtube-scraper
+I created a csv file and inserted 14 different youtube links (studyiq, news etc) that I normally watch. Using the youtube data api I have selected another 2 relevent videos from each url and also download them. So, initially I have 14 links in csv file and selecting another 2 videos from each link I have in total downloaded 42 videos. I have used the opencv package to create frames for each videos.
