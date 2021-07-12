@@ -120,6 +120,7 @@ print(len(D))
 
 loc='C:/Users/Admin/Desktop/Project1/'
 F=[]      # for storing all the downloaded videos title + extention
+G=[]      # for storing video_title for creating frames 
 
 
 def Download_videos(D,F,loc):
@@ -128,6 +129,20 @@ def Download_videos(D,F,loc):
         video.streams.first().download(loc)
         print("Video is downloaded")
         #print("video title:" +video.title)
+        title=video.title
+        title=title[0:30]
+        
+        
+        for m in range(0, len(title)):
+            if (title[m]==':' or title[m]=='|' or title[m]=='?' or title[m]=='*' or title[m]=='"' or title[m]=='\\' or title[m]=='/'):
+                title1, title2=re.split(pattern=r"[:|\\/?*\"]", string=title)
+                title=title1+title2
+                break
+            
+            m=m+1
+                
+        #print(title)
+        G.append(title)
         filename= loc+video.title +'.mp4'
         F.append(filename)
         i=i+1
@@ -147,9 +162,10 @@ print(len(F))
 os.chdir(loc)
 #for k in range(0, len(F)):
 #    os.mkdir('frame-'+str(k))
-#    k=k+1
-print(F[0])
 
+ # print(os.mkdir(G[k])) 
+ # k=k+1
+ print(F[0])
 
 # In[57]:
 
@@ -162,7 +178,8 @@ print(F[0])
 
 def save_frame(loc,F):
     for k in range(0,len(F)):
-        os.mkdir('frame-'+str(k))
+        #os.mkdir('frame-'+str(k))
+        os.mkdir(G[k])
         
         cap=cv2.VideoCapture(F[k])
 
@@ -172,7 +189,8 @@ def save_frame(loc,F):
             flag, frame=cap.read()
             if flag==False:
                 break
-            loc1="C:/Users/Admin/Desktop/Project1/"+"frame-"+str(k) +"/image"+str(i) +".jpg"
+            #loc1="C:/Users/Admin/Desktop/Project1/"+"frame-"+str(k) +"/image"+str(i) +".jpg"
+            loc1="C:/Users/Admin/Desktop/Project1/"+G[k] +"/image"+str(i) +".jpg"
             cv2.imwrite(loc1, frame)
             i=i+1
     
