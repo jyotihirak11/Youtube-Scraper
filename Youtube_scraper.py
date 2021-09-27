@@ -99,8 +99,12 @@ def save_frame(H, loc):
     gap=20
     
     for k in H:
-       
-        os.mkdir(k)
+        try:
+            os.mkdir(k)
+        except FileExistsError:
+            printf("Folder already exists")
+            
+        
         file_loc=loc+k+'.mp4'
         cap=cv2.VideoCapture(file_loc)
 
