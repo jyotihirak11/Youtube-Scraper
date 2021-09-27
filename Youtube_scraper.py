@@ -7,12 +7,15 @@
 import pandas as pd
 
 from googleapiclient.discovery import build    #for using YouTube API
+from googleapiclient.errors import HttpError
 
 from pytube import YouTube  # for downloading youtube videos
 
 import os                   # for creating new directories
 
 import cv2
+
+from sys import exit
 
 
 # In[2]:
@@ -23,8 +26,15 @@ def Youtube_api(link, videoId):                              # function to gener
     
     
     api_key = 'AIzaSyA3MTY_9ig6svkofnp8haGvHcgbG6OUc4o'
-    youtube = build('youtube', 'v3', developerKey=api_key)
-
+    
+    try:
+        youtube = build('youtube', 'v3', developerKey=api_key)
+    
+    except HttpError as err:
+        if err.resp.status in [400]:
+            print('HttpError 400: The request cannot be completed because API key not valid. Please pass a valid API key.')
+        return
+    
     
     request = youtube.search().list(
     part = 'snippet',
@@ -34,8 +44,14 @@ def Youtube_api(link, videoId):                              # function to gener
     )
 
     
+    try:
+        response = request.execute()
+    except HttpError as err:
+        if err.resp.status in [403]:
+            print(' HttpError 403: The request cannot be completed because you have exceeded your youtube v3 api quota')
+            
+        return
     
-    response = request.execute()
     #print(response)
 
 
@@ -129,8 +145,11 @@ def scrap(file):
         link=link+'='
         #print(link, videoId)
         
-        
-        D.extend(Youtube_api(link, videoId))  #generate all the links of related video files and store it in list D 
+        res=Youtube_api(link, videoId)
+        if res is None:
+            print("Cannot generate links")
+            exit() 
+        D.extend(res)  #generate all the links of related video files and store it in list D 
         
     #print(D)     
     stored_loc='C:/Users/Admin/Desktop/Project1/'  #loc folder for downloading videos and frames
